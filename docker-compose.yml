@@ -1,0 +1,39 @@
+version: '3.2'
+
+services:
+
+  frontend:
+    build: frontend
+    ports:
+      - 20080:80
+    volumes:
+      # Re-use local composer cache via host-volume
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # Mount source-code for development
+      - ./:/app
+
+  backend:
+    build: backend
+    ports:
+      - 21080:80
+    volumes:
+      # Re-use local composer cache via host-volume
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # Mount source-code for development
+      - ./:/app
+
+  pgsql:
+    image: 'postgres:15-alpine'
+    environment:
+      - POSTGRES_DB=yii2advanced
+      - POSTGRES_USER=yii2advanced
+      - POSTGRES_PASSWORD=secret
+
+  rabbitmq:
+    image: 'rabbitmq:latest'
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=user
+    ports:
+      - "15672:15672"
+      - "5672:5672"
